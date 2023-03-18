@@ -5,9 +5,10 @@ import fs from "fs";
 const ProductDetailPage = (props) => {
   const { loadedProduct } = props;
 
-  // if (!loadedProduct) {
-  //   return <p>Loading...</p>;
-  // }
+  // Use in case of fallback set to true
+  if (!loadedProduct) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <Fragment>
@@ -32,6 +33,11 @@ export const getStaticProps = async (context) => {
   const data = await getData();
 
   const product = data.products.find((product) => product.id === productId);
+
+  if (!product) {
+    return { notFound: true };
+  }
+
   return {
     props: {
       loadedProduct: product,
@@ -46,7 +52,7 @@ export const getStaticPaths = async () => {
 
   return {
     paths: params,
-    fallback: false,
+    fallback: true,
   };
 };
 
