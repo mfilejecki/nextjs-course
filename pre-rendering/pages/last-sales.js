@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-const LastSalesPage = () => {
-  const [sales, setSales] = useState();
+const apiUrl =
+  "https://react-db887-default-rtdb.europe-west1.firebasedatabase.app/sales.json";
+
+const LastSalesPage = (props) => {
+  const [sales, setSales] = useState(props.sales);
   // const [isLoading, setIsLoading] = useState(false);
-  const apiUrl =
-    "https://react-db887-default-rtdb.europe-west1.firebasedatabase.app/sales.json";
   const { data, error } = useSWR(apiUrl, (url) =>
     fetch(url).then((res) => res.json())
   );
@@ -45,7 +46,7 @@ const LastSalesPage = () => {
     return <p>Failed to load.</p>;
   }
 
-  if (!data || !sales) {
+  if (!data && !sales) {
     return <p>Loading...</p>;
   }
   return (
@@ -57,6 +58,27 @@ const LastSalesPage = () => {
       ))}
     </ul>
   );
+};
+
+export const getStaticProps = async () => {
+  const response = await fetch(apiUrl);
+  const data = await response.json();
+
+  const transformedSales = [];
+  for (const key in data) {
+    transformedSales.push({
+      id: key,
+      username: data[key].username,
+      volume: data[key].volume,
+    });
+  }
+
+  return {
+    props: {
+      sales: transformedSales,
+    },
+    revalidate: 10,
+  };
 };
 
 export default LastSalesPage;
