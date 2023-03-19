@@ -8,10 +8,17 @@ import ErrorAlert from "../../components/ui/error-alert";
 
 const FilteredEventsPage = (props) => {
   const { hasError, filteredEvents, month, year } = props;
+  const pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta name="description" content={`All events for${month}/${year}`} />
+    </Head>
+  );
 
   if (hasError) {
     return (
       <Fragment>
+        {pageHeadData}
         <ErrorAlert>
           <p>Invalid filter. Adjust your values.</p>
         </ErrorAlert>
@@ -25,6 +32,7 @@ const FilteredEventsPage = (props) => {
   if (!filteredEvents || filteredEvents.length === 0) {
     return (
       <Fragment>
+        {pageHeadData}
         <ErrorAlert>
           <p>No events found for the chosen filter.</p>
         </ErrorAlert>
@@ -39,10 +47,7 @@ const FilteredEventsPage = (props) => {
 
   return (
     <Fragment>
-      <Head>
-        <title>Filtered Events</title>
-        <meta name="description" content={`All events for${month}/${year}`} />
-      </Head>
+      {pageHeadData}
       <ResultsTitle date={date} />
       <EventList items={filteredEvents} />
     </Fragment>
