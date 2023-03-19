@@ -1,4 +1,5 @@
 import React from "react";
+import Head from "next/head";
 import { getFeaturedEvents } from "../helpers/api-utils";
 import EventList from "../components/events/event-list";
 
@@ -7,6 +8,10 @@ const HomePage = (props) => {
 
   return (
     <div>
+      <Head>
+        <title>NextJS Events</title>
+        <meta name="description" content="Dayummn this page is so pogU." />
+      </Head>
       <EventList items={featuredEvents} />
     </div>
   );
