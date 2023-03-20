@@ -3,7 +3,7 @@ import NewComment from "./new-comment";
 import CommentList from "./comment-list";
 import styles from "./comments.module.css";
 
-const Comments = () => {
+const Comments = (props) => {
   const { eventId } = props;
 
   const [showComments, setShowComments] = useState(false);
