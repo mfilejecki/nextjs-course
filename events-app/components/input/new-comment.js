@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import styles from "./new-comment.module.css";
 
-const NewComment = () => {
+const NewComment = (props) => {
   const [isInvalid, setIsInvalid] = useState(false);
 
   const emailInputRef = useRef();
@@ -36,7 +36,7 @@ const NewComment = () => {
   };
 
   return (
-    <form className={styles.form}>
+    <form className={styles.form} onSubmit={sendCommentHandler}>
       <div className={styles.row}>
         <div className={styles.control}>
           <label htmlFor="email">Your email</label>
