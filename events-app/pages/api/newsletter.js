@@ -1,4 +1,6 @@
 import { emailSchema } from "../../validations/NewsletterValidation";
+import { MongoClient } from "mongodb";
+import { uri } from "../../helpers/uri";
 
 const handler = async (req, res) => {
   if (req.method === "POST") {
@@ -9,7 +11,12 @@ const handler = async (req, res) => {
       res.status(422).json({ message: "Invalid email address." });
       return;
     }
-    console.log(userEmail);
+
+    const client = await MongoClient.connect(uri);
+    const db = client.db("newsletter");
+    await db.collection("emails").insertOne({ email: userEmail });
+    client.close();
+
     res.status(201).json({ message: "Signed up!" });
   }
 };
