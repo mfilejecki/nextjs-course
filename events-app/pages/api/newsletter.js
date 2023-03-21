@@ -13,8 +13,8 @@ const handler = async (req, res) => {
     }
 
     const client = await MongoClient.connect(uri);
-    const db = client.db("newsletter");
-    await db.collection("emails").insertOne({ email: userEmail });
+    const db = client.db("events");
+    await db.collection("newsletter").insertOne({ email: userEmail });
     client.close();
 
     res.status(201).json({ message: "Signed up!" });
