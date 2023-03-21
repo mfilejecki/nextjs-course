@@ -1,10 +1,21 @@
 import { commentsSchema } from "../../../validations/CommentsValidation";
-import { uri } from "../../../helpers/uri";
-import { MongoClient } from "mongodb";
+import {
+  connectDatabase,
+  insertDocument,
+  getAllDocuments,
+  errorResponse,
+} from "../../../helpers/db-util";
 
 const handler = async (req, res) => {
   const eventId = req.query.eventId;
-  const client = await MongoClient.connect(uri);
+
+  let client;
+  try {
+    client = await connectDatabase();
+  } catch (error) {
+    errorResponse(res, "Connecting to the database failed!");
+    return;
+  }
 
   if (req.method === "POST") {
     const { email, name, text } = req.body;
@@ -16,6 +27,7 @@ const handler = async (req, res) => {
     const isValid = commentsSchema.isValid(userInput);
     if (!isValid) {
       res.status(422).json({ message: "Invalid input." });
+      client.close();
       return;
     }
     const newComment = {
@@ -24,24 +36,28 @@ const handler = async (req, res) => {
       text,
       eventId,
     };
-    const db = client.db("events");
-    const result = await db.collection("comments").insertOne(newComment);
-    newComment.id = result.insertedId;
-
-    res
-      .status(201)
-      .json({ message: "Added new comment.", comment: newComment });
+    let result;
+    try {
+      result = await insertDocument(client, "events", "comments", newComment);
+      newComment._id = result.insertedId;
+      res
+        .status(201)
+        .json({ message: "Added new comment.", comment: newComment });
+    } catch (error) {
+      errorResponse(res, "Inserting comment to the database failed!");
+    }
   }
   if (req.method === "GET") {
-    const db = client.db("events");
-    const documents = await db
-      .collection("comments")
-      .find()
-      .sort({ _id: -1 })
-      .toArray();
-    res.status(200).json({ comments: documents });
+    let documents;
+    try {
+      documents = await getAllDocuments(client, "events", "comments", {
+        _id: -1,
+      });
+      res.status(200).json({ comments: documents });
+    } catch (error) {
+      errorResponse(res, "Getting comments from database failed!");
+    }
   }
-
   client.close();
 };
 
