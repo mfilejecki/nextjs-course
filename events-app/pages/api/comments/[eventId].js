@@ -1,7 +1,11 @@
 import { commentsSchema } from "../../../validations/CommentsValidation";
+import { uri } from "../../../helpers/uri";
+import { MongoClient } from "mongodb";
 
-const handler = (req, res) => {
+const handler = async (req, res) => {
   const eventId = req.query.eventId;
+  const client = await MongoClient.connect(uri);
+
   if (req.method === "POST") {
     const { email, name, text } = req.body;
     const userInput = {
@@ -15,12 +19,15 @@ const handler = (req, res) => {
       return;
     }
     const newComment = {
-      id: new Date().toISOString(),
       email,
       name,
       text,
+      eventId,
     };
-    console.log(newComment);
+    const db = client.db("events");
+    const result = await db.collection("comments").insertOne(newComment);
+    newComment.id = result.insertedId;
+
     res
       .status(201)
       .json({ message: "Added new comment.", comment: newComment });
@@ -40,6 +47,8 @@ const handler = (req, res) => {
     ];
     res.status(200).json({ comments: dummyList });
   }
+
+  client.close();
 };
 
 export default handler;
