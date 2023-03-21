@@ -16,12 +16,13 @@ export const getAllDocuments = async (
   client,
   database,
   collection,
-  sortingMethod
+  sortingMethod,
+  filter = {}
 ) => {
   const db = client.db(database);
   const documents = await db
     .collection(collection)
-    .find()
+    .find(filter)
     .sort(sortingMethod)
     .toArray();
   return documents;
