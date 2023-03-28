@@ -1,11 +1,9 @@
 import React from "react";
 
+import PostContent from "../../components/posts/post-detail/post-content";
+
 const SelectedPostPage = () => {
-  return (
-    <div>
-      <h1>SelectedBlogPage</h1>
-    </div>
-  );
+  return <PostContent />;
 };
 
-export default SelectedBlogPage;
+export default SelectedPostPage;
