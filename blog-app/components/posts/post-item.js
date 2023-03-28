@@ -13,10 +13,11 @@ const PostItem = (props) => {
     year: "numeric",
   });
   const fullImagePath = `/images/posts/${slug}/${image}`;
+  const linkPath = `/posts/${slug}`;
 
   return (
     <li className={styles.post}>
-      <Link href={slug}>
+      <Link href={linkPath}>
         <div className={styles.image}>
           <Image src={fullImagePath} alt={title} width={300} height={200} />
         </div>

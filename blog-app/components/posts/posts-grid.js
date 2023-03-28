@@ -1,4 +1,5 @@
 import React from "react";
+import PostItem from "../posts/post-item";
 
 import styles from "./posts-grid.module.css";
 
@@ -7,7 +8,7 @@ const PostsGrid = (props) => {
   return (
     <ul className={styles.grid}>
       {posts.map((post) => (
-        <PostItem post={post} />
+        <PostItem key={post.slug} post={post} />
       ))}
     </ul>
   );
