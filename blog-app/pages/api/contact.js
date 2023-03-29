@@ -1,4 +1,7 @@
 import { contactSchema } from "../../lib/contact-form-util";
+import { MongoClient } from "mongodb";
+
+import { uri } from "../../lib/uri";
 
 const handler = async (req, res) => {
   if (req.method === "POST") {
@@ -9,13 +12,32 @@ const handler = async (req, res) => {
       res.status(422).json({ message: "Invalid input." });
       return;
     }
-    // store in mongoDB
     const newMessage = {
       email,
       name,
       message,
     };
-    console.log(newMessage);
+
+    let client;
+    try {
+      client = await MongoClient.connect(uri);
+    } catch (error) {
+      res.status(500).json({ message: "Could not connect to database." });
+      return;
+    }
+
+    const db = client.db("blog");
+
+    try {
+      const result = await db.collection("messages").insertOne(newMessage);
+      newMessage.id = result.insertedId;
+    } catch (error) {
+      res.status(500).json({ message: "Storing message failed." });
+      return;
+    }
+
+    client.close();
+
     res
       .status(201)
       .json({ message: "Successfully stored message!", data: newMessage });
