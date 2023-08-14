@@ -29,7 +29,7 @@ async function handler(req, res) {
   }
 
   const currentPassword = user.password;
-  const isPasswordEqual = verifyPassword(oldPassword, currentPassword);
+  const isPasswordEqual = await verifyPassword(oldPassword, currentPassword);
 
   if (!isPasswordEqual) {
     res.status(403).json({ message: "Invalid passwords." });
@@ -37,7 +37,7 @@ async function handler(req, res) {
     return;
   }
 
-  const hashedNewPassword = hashPassword(newPassword);
+  const hashedNewPassword = await hashPassword(newPassword);
 
   const result = await usersCollection.updateOne(
     { email: userEmail },
