@@ -1,7 +1,8 @@
 import { contactSchema } from "../../lib/contact-form-util";
 import { MongoClient } from "mongodb";
 
-import { uri } from "../../lib/uri";
+// import { uri } from "../../lib/uri";
+const connectionString = `mongodb+srv://${process.env.mongodb_username}:${process.env.mongodb_password}@${process.env.mongodb_clustername}.qgfm2d0.mongodb.net/${process.env.mongodb_database}?retryWrites=true&w=majority`;
 
 const handler = async (req, res) => {
   if (req.method === "POST") {
@@ -20,7 +21,7 @@ const handler = async (req, res) => {
 
     let client;
     try {
-      client = await MongoClient.connect(uri);
+      client = await MongoClient.connect(connectionString);
     } catch (error) {
       res.status(500).json({ message: "Could not connect to database." });
       return;
